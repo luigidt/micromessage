@@ -1,0 +1,20 @@
+{
+    "name": "luigidt/micromessage",
+    "description": "A rest api for micro messages",
+    "keywords": ["rest", "api", "micromessage"],
+    "homepage": "http://github.com/luigidt/micromessage",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Luigi Dariva Teixera",
+            "email": "luigidt@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "silex/silex": "~2.0"
+    },
+    "require-dev": {
+        "symfony/browser-kit": "^3.2"
+    }
+}
