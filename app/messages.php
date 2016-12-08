@@ -1,6 +1,7 @@
 <?php
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use MicroMessage\Entities\Message;
@@ -42,6 +43,23 @@ $messages->post('/', function (Request $request) use ($app) {
     return new JsonResponse(['id' => $message->getId()], 201, [
         'Location' => "/messages/{$message->getId()}"
     ]);
+});
+
+$messages->get('/{id}', function ($id) use ($app) {
+    try {
+        $messages = $app['orm.em']
+            ->createQueryBuilder()
+            ->from('MicroMessage\Entities\Message', 'm')
+            ->select(['m.id', 'm.author', 'm.message'])
+            ->where('m.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getSingleResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
+
+        return $app->json($messages);
+    } catch (\Doctrine\Orm\NoResultException $e) {
+        return new Response('Message not found!', 404);
+    }
 });
 
 return $messages;

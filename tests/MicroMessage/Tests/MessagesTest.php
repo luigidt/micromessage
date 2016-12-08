@@ -26,6 +26,23 @@ class MessagesTest extends ApplicationTest
         $this->assertEquals($this->message->getMessage(), $message->message);
     }
 
+    public function testGetMessageById()
+    {
+        $this->client->request('GET', '/messages/' . $this->message->getId());
+        $this->assertTrue($this->client->getResponse()->isOk());
+
+        $message = json_decode($this->client->getResponse()->getContent());
+        $this->assertEquals($this->message->getId(), $message->id);
+        $this->assertEquals($this->message->getAuthor(), $message->author);
+        $this->assertEquals($this->message->getMessage(), $message->message);
+    }
+
+    public function testGetMessageByIdNotFound()
+    {
+        $this->client->request('GET', '/messages/322');
+        $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+    }
+
     public function testListMessagesWhenEmpty()
     {
         // Remove the fixture
