@@ -27,6 +27,8 @@ $app->register(new DoctrineOrmServiceProvider, array(
     ),
 ));
 
+$app->register(new Silex\Provider\ValidatorServiceProvider());
+
 $app->get('/', function () {
     return "it's working";
 });

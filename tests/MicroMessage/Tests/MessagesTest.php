@@ -68,4 +68,72 @@ class MessagesTest extends ApplicationTest
         $this->assertEquals('Mary Doe', $message->getAuthor());
         $this->assertEquals('Hey John! Where are you?', $message->getMessage());
     }
+
+    public function testDontLetCreateMessageWithoutAuthor()
+    {
+        $this->client->request('POST', '/messages/', [
+            'message' => 'Hey John! Where are you?'
+        ]);
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $errors = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            ['errors' => [['property' => 'author', 'message' => 'This value should not be blank.']]],
+            $errors
+        );
+    }
+
+    public function testDontLetCreateMessageWhenAuthorIsTooLong()
+    {
+        $this->client->request('POST', '/messages/', [
+            'author' => 'A Very Long Author Name That Should Not Work!',
+            'message' => 'Hey John! Where are you?'
+        ]);
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $errors = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            [
+                'errors' => [
+                    [
+                        'property' => 'author',
+                        'message' => 'This value is too long. It should have 32 characters or less.'
+                    ]
+                ]
+            ],
+            $errors
+        );
+    }
+
+    public function testDontLetCreateMessageWithoutText()
+    {
+        $this->client->request('POST', '/messages/', [
+            'author' => 'Mary Joe',
+        ]);
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $errors = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            ['errors' => [['property' => 'message', 'message' => 'This value should not be blank.']]],
+            $errors
+        );
+    }
+
+    public function testDontLetCreateMessageWhenTextIsTooLong()
+    {
+        $this->client->request('POST', '/messages/', [
+            'author' => 'Mary Joe',
+            'message' => str_repeat('Hey John! Where are you?', 10)
+        ]);
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $errors = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            [
+                'errors' => [
+                    [
+                        'property' => 'message',
+                        'message' => 'This value is too long. It should have 140 characters or less.'
+                    ]
+                ]
+            ],
+            $errors
+        );
+    }
 }

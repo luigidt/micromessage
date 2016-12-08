@@ -14,14 +14,27 @@ $messages->get('/', function () use ($app) {
         ->select(['m.id', 'm.author', 'm.message'])
         ->getQuery()
         ->getResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
-        
+
     return $app->json($messages);
 });
 
 $messages->post('/', function (Request $request) use ($app) {
     $message = new Message();
-    $message->setAuthor($request->get('author'));
-    $message->setMessage($request->get('message'));
+    $message->setAuthor($request->get('author', null));
+    $message->setMessage($request->get('message', null));
+
+    $violations = $app['validator']->validate($message);
+
+    if (count($violations) > 0) {
+        $errors = [];
+        foreach ($violations as $violation) {
+            $errors[] = [
+                'property' => $violation->getPropertyPath(),
+                'message' => $violation->getMessage()
+            ];
+        }
+        return $app->json(['errors' => $errors], 400);
+    }
 
     $app['orm.em']->persist($message);
     $app['orm.em']->flush();

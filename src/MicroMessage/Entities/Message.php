@@ -3,6 +3,8 @@
 namespace MicroMessage\Entities;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * @Table(name="messages")
@@ -82,5 +84,13 @@ class Message
     {
         $this->message = $message;
         return $this;
+    }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('author', new Assert\NotBlank());
+        $metadata->addPropertyConstraint('author', new Assert\Length(array('max' => 32)));
+        $metadata->addPropertyConstraint('message', new Assert\NotBlank());
+        $metadata->addPropertyConstraint('message', new Assert\Length(array('max' => 140)));
     }
 }

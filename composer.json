@@ -19,7 +19,8 @@
         "php": ">=5.5.9",
         "silex/silex": "~2.0",
         "doctrine/dbal": "~2.2",
-        "dflydev/doctrine-orm-service-provider": "^2.0"
+        "dflydev/doctrine-orm-service-provider": "^2.0",
+        "symfony/validator": "^3.2"
     },
     "require-dev": {
         "symfony/browser-kit": "^3.2",
