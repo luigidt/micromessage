@@ -11,7 +11,7 @@ class MessagesTest extends ApplicationTest
         $this->assertTrue($client->getResponse()->isOk());
         $this->assertEquals(
             $client->getResponse()->getContent(),
-            "messages"
+            "[]"
         );
     }
 }

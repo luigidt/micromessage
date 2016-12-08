@@ -10,9 +10,16 @@
             "email": "luigidt@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-0": {
+            "MicroMessage": "src/"
+        }
+    },
     "require": {
         "php": ">=5.5.9",
-        "silex/silex": "~2.0"
+        "silex/silex": "~2.0",
+        "doctrine/dbal": "~2.2",
+        "dflydev/doctrine-orm-service-provider": "^2.0"
     },
     "require-dev": {
         "symfony/browser-kit": "^3.2"
