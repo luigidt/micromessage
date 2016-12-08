@@ -8,4 +8,6 @@ $app->get('/', function () {
     return "it's working";
 });
 
+$app->mount('/messages', require __DIR__ . '/app/messages.php');
+
 return $app;

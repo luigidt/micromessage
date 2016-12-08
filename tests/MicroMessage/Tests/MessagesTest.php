@@ -2,18 +2,16 @@
 
 namespace MicroMessage\Tests;
 
-use Silex\WebTestCase;
-
-class IndexTest extends ApplicationTest
+class MessagesTest extends ApplicationTest
 {
-    public function testIndexMethod()
+    public function testListMessages()
     {
         $client = $this->createClient();
-        $client->request('GET', '/');
+        $client->request('GET', '/messages/');
         $this->assertTrue($client->getResponse()->isOk());
         $this->assertEquals(
             $client->getResponse()->getContent(),
-            "it's working"
+            "messages"
         );
     }
 }
