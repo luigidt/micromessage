@@ -35,7 +35,17 @@ class Message
      */
     public function getId()
     {
-        return $id;
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     * @return Message
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**
@@ -43,7 +53,7 @@ class Message
      */
     public function getAuthor()
     {
-        return $author;
+        return $this->author;
     }
 
     /**
@@ -61,7 +71,7 @@ class Message
      */
     public function getMessage()
     {
-        return $message;
+        return $this->message;
     }
 
     /**
