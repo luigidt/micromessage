@@ -157,7 +157,7 @@ class MessagesTest extends ApplicationTest
     public function testRemoveMessage()
     {
         $this->client->request('DELETE', '/messages/' . $this->message->getId());
-        $this->assertTrue($this->client->getResponse()->isOk());
+        $this->assertEquals(204, $this->client->getResponse()->getStatusCode());
 
         // Check entity count is zero
         $count = $this->app['orm.em']->getRepository('MicroMessage\Entities\Message')

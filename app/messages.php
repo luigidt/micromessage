@@ -58,7 +58,7 @@ $messages->get('/{id}', function ($id) use ($app) {
 
         return $app->json($messages);
     } catch (\Doctrine\Orm\NoResultException $e) {
-        return new Response('Message not found!', 404);
+        return new Response('', 404);
     }
 });
 
@@ -68,13 +68,13 @@ $messages->delete('/{id}', function ($id) use ($app) {
         ->find($id);
 
     if ($message === null) {
-        return new Response('Message not found!', 404);
+        return new Response('', 404);
     }
 
     $app['orm.em']->remove($message);
     $app['orm.em']->flush();
 
-    return "Message successfully removed";
+    return new Response('', 204);
 });
 
 return $messages;
