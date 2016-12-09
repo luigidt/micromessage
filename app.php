@@ -29,10 +29,6 @@ $app->register(new DoctrineOrmServiceProvider, array(
 
 $app->register(new Silex\Provider\ValidatorServiceProvider());
 
-$app->get('/', function () {
-    return "it's working";
-});
-
 $app->mount('/messages', require __DIR__ . '/app/messages.php');
 
 return $app;
