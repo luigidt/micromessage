@@ -5,6 +5,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use MicroMessage\Entities\Message;
+use MicroMessage\Helpers\ViolationsHelper;
 
 $messages = $app['controllers_factory'];
 
@@ -27,14 +28,7 @@ $messages->post('/', function (Request $request) use ($app) {
     $violations = $app['validator']->validate($message);
 
     if (count($violations) > 0) {
-        $errors = [];
-        foreach ($violations as $violation) {
-            $errors[] = [
-                'property' => $violation->getPropertyPath(),
-                'message' => $violation->getMessage()
-            ];
-        }
-        return $app->json(['errors' => $errors], 400);
+        return $app->json(ViolationsHelper::toJson($violations), 400);
     }
 
     $app['orm.em']->persist($message);
@@ -92,14 +86,7 @@ $messages->put('/{id}', function (Request $request, $id) use ($app) {
     $violations = $app['validator']->validate($message);
 
     if (count($violations) > 0) {
-        $errors = [];
-        foreach ($violations as $violation) {
-            $errors[] = [
-                'property' => $violation->getPropertyPath(),
-                'message' => $violation->getMessage()
-            ];
-        }
-        return $app->json(['errors' => $errors], 400);
+        return $app->json(ViolationsHelper::toJson($violations), 400);
     }
 
     $app['orm.em']->persist($message);
