@@ -1,0 +1,23 @@
+web:
+  build: .
+  volumes:
+    - .:/var/www/html
+  environment:
+    - MICROMESSAGE_ENV=production
+  ports:
+    - "8080:80"
+  expose:
+    - "8080"
+  links:
+    - postgres
+    - redis
+postgres:
+  image: postgres:9.3
+  ports:
+    - "5432:5432"
+  environment:
+    - POSTGRES_PASSWORD=verysecurepassword
+redis:
+  image: redis:3.0
+  ports:
+    - "6379:6379"

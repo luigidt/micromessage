@@ -3,6 +3,8 @@ MicroMessage
 
 Abaixo a lista de métodos disponíveis nesse WebService:
 
+# Métodos
+
 <table>
   <tr>
     <th>Caminho</th>
@@ -58,3 +60,10 @@ Parâmetros para a mensagem:
     <td>140</td>
   </tr>
 </table>
+
+# Instalação
+
+Para que o WebService funcione será necessário:
+
+- Criar um banco de dados chamado `micromessage` no container do postgres
+- Criar o schema no novo banco de dados rodando o comando: php bin/console.php orm:schema-tool:update --force
