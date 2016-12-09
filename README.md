@@ -44,7 +44,7 @@ Parâmetros para a mensagem:
   <tr>
     <th>Nome</th>
     <th>Tipo</th>
-    <th>Obrigatório<th>
+    <th>Obrigatório</th>
     <th>Tamanho Máximo</th>
   </tr>
   <tr>
@@ -66,4 +66,4 @@ Parâmetros para a mensagem:
 Para que o WebService funcione será necessário:
 
 - Criar um banco de dados chamado `micromessage` no container do postgres
-- Criar o schema no novo banco de dados rodando o comando: php bin/console.php orm:schema-tool:update --force
+- Criar o schema do novo banco de dados rodando o comando: php bin/console.php orm:schema-tool:update --force
