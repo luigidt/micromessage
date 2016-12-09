@@ -62,4 +62,19 @@ $messages->get('/{id}', function ($id) use ($app) {
     }
 });
 
+$messages->delete('/{id}', function ($id) use ($app) {
+    $message = $app['orm.em']
+        ->getRepository('MicroMessage\Entities\Message')
+        ->find($id);
+
+    if ($message === null) {
+        return new Response('Message not found!', 404);
+    }
+
+    $app['orm.em']->remove($message);
+    $app['orm.em']->flush();
+
+    return "Message successfully removed";
+});
+
 return $messages;

@@ -39,7 +39,7 @@ class MessagesTest extends ApplicationTest
 
     public function testGetMessageByIdNotFound()
     {
-        $this->client->request('GET', '/messages/322');
+        $this->client->request('GET', '/messages/99999');
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
     }
 
@@ -152,5 +152,26 @@ class MessagesTest extends ApplicationTest
             ],
             $errors
         );
+    }
+
+    public function testRemoveMessage()
+    {
+        $this->client->request('DELETE', '/messages/' . $this->message->getId());
+        $this->assertTrue($this->client->getResponse()->isOk());
+
+        // Check entity count is zero
+        $count = $this->app['orm.em']->getRepository('MicroMessage\Entities\Message')
+            ->createQueryBuilder('m')
+            ->select('count(m.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $this->assertEquals(0, $count, 'Entity count should be zero');
+    }
+
+    public function testRemoveMessageNotFound()
+    {
+        $this->client->request('DELETE', '/messages/99999');
+        $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
     }
 }
