@@ -77,4 +77,35 @@ $messages->delete('/{id}', function ($id) use ($app) {
     return new Response('', 204);
 });
 
+$messages->put('/{id}', function (Request $request, $id) use ($app) {
+    $message = $app['orm.em']
+        ->getRepository('MicroMessage\Entities\Message')
+        ->find($id);
+
+    if ($message === null) {
+        return new Response('', 404);
+    }
+
+    $message->setAuthor($request->get('author', null));
+    $message->setMessage($request->get('message', null));
+
+    $violations = $app['validator']->validate($message);
+
+    if (count($violations) > 0) {
+        $errors = [];
+        foreach ($violations as $violation) {
+            $errors[] = [
+                'property' => $violation->getPropertyPath(),
+                'message' => $violation->getMessage()
+            ];
+        }
+        return $app->json(['errors' => $errors], 400);
+    }
+
+    $app['orm.em']->persist($message);
+    $app['orm.em']->flush();
+
+    return new Response('', 204);
+});
+
 return $messages;

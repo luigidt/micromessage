@@ -174,4 +174,100 @@ class MessagesTest extends ApplicationTest
         $this->client->request('DELETE', '/messages/99999');
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
     }
+
+    public function testUpdateMessage()
+    {
+        $this->client->request('PUT', '/messages/' . $this->message->getId(), [
+            'author' => 'John Doe Jr.',
+            'message' => 'A new message!'
+        ]);
+
+        $this->assertEquals(204, $this->client->getResponse()->getStatusCode());
+
+        $this->assertEquals('John Doe Jr.', $this->message->getAuthor());
+        $this->assertEquals('A new message!', $this->message->getMessage());
+    }
+
+    public function testUpdateMessageNotFound()
+    {
+        $this->client->request('PUT', '/messages/99999', [
+            'author' => 'John Doe Jr.',
+            'message' => 'A new message!'
+        ]);
+
+        $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testDontLetUpdateMessageWithoutAuthor()
+    {
+        $this->client->request('PUT', '/messages/' . $this->message->getId(), [
+            'message' => 'A new message!'
+        ]);
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $errors = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            ['errors' => [['property' => 'author', 'message' => 'This value should not be blank.']]],
+            $errors
+        );
+    }
+
+    public function testDontLetUpdateMessageWhenAuthorIsTooLong()
+    {
+        $this->client->request('PUT', '/messages/' . $this->message->getId(), [
+            'author' => 'Very Long Name With More Than 32 Characters',
+            'message' => 'A new message!'
+        ]);
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $errors = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            [
+                'errors' => [
+                    [
+                        'property' => 'author',
+                        'message' => 'This value is too long. It should have 32 characters or less.'
+                    ]
+                ]
+            ],
+            $errors
+        );
+    }
+
+    public function testDontLetUpdateMessageWithoutText()
+    {
+        $this->client->request('PUT', '/messages/' . $this->message->getId(), [
+            'author' => 'John Doe Jr',
+            'message' => ''
+        ]);
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $errors = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            ['errors' => [['property' => 'message', 'message' => 'This value should not be blank.']]],
+            $errors
+        );
+    }
+
+    public function testDontLetUpdateMessageWhenTextIsTooLong()
+    {
+        $this->client->request('PUT', '/messages/' . $this->message->getId(), [
+            'author' => 'John Doe Jr',
+            'message' => str_repeat('A new message! But too long :(', 10)
+        ]);
+
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $errors = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals(
+            [
+                'errors' => [
+                    [
+                        'property' => 'message',
+                        'message' => 'This value is too long. It should have 140 characters or less.'
+                    ]
+                ]
+            ],
+            $errors
+        );
+    }
 }
