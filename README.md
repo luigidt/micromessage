@@ -65,5 +65,5 @@ Parâmetros para a mensagem:
 
 Para que o WebService funcione será necessário:
 
-- Criar um banco de dados chamado `micromessage` no container do postgres
-- Criar o schema do novo banco de dados rodando o comando: php bin/console.php orm:schema-tool:update --force
+- Renomear o arquivo `.env.sample` para `.env` e fazer as configurações necessárias
+- Caso seja o ambiente de produção é necessário executar o comando `create_database.bat` para criar o banco de dados (em breve a versão para POSIX!)

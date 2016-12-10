@@ -13,6 +13,7 @@ $app = require __DIR__.'/../app.php';
 
 $console = new Application('App', 'n/a');
 $console->setHelperSet(new Symfony\Component\Console\Helper\HelperSet(array(
+    'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper($app["orm.em"]->getConnection()),
     'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper($app["orm.em"])
 )));
 

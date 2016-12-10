@@ -1,3 +1,4 @@
 /vendor
 app.db
 /var/proxies
+.env
