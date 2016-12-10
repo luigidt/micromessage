@@ -8,6 +8,7 @@
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 use MicroMessage\Entities\Message;
 use MicroMessage\Helpers\ViolationsHelper;
@@ -19,24 +20,45 @@ $messages = $app['controllers_factory'];
  * Retorna uma lista com todas as mensagens publicadas
  * Exemplo de resposta:
  *
- * [
- *     {
- *         "author": "John Doe",
- *         "message": "Hello people!",
- *     },
- *     {
- *         "author": "John Doe",
- *         "message": "Hello people!",
- *     },
- * ]
+ * {
+ *     "messages": [
+ *         {
+ *             "author": "John Doe",
+ *             "message": "Hello people!",
+ *         },
+ *         {
+ *             "author": "John Doe",
+ *             "message": "Hello people!",
+ *         },
+ *     ]
+ * }
  *
  */
-$messages->get('/', function () use ($app) {
-    $messages = $app['orm.em']
+$messages->get('/', function (Request $request) use ($app) {
+    $query = $app['orm.em']
         ->createQuery('SELECT m.id, m.author, m.message FROM MicroMessage\Entities\Message m')
-        ->getResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
+        ->setHydrationMode(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
 
-    return $app->json($messages);
+    if ($request->get('page', null) === null && $request->get('limit', null) === null) {
+        $messages = $query->getResult();
+        return $app->json(['messages' => $messages]);
+    }
+
+    $page = max(0, $request->get('page', 0));
+    $limit = max(0, $request->get('limit', 100));
+    $start = $limit * $page; // $limit * $page - 1
+
+    $query->setFirstResult($start)
+        ->setMaxResults($limit);
+
+    $messages = $query->getResult();
+
+    return $app->json([
+        'messages' => $messages,
+        'limit' => $limit,
+        'size' => count($messages),
+        'start' => $start
+    ]);
 });
 
 /**

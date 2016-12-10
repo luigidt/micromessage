@@ -13,6 +13,21 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class Message
 {
     /**
+     * Cria uma nova mensagem com os valores passados
+     *
+     * @param string $author message author
+     * @param string $text message text
+     * @return Message
+     */
+    public static function create($author, $text)
+    {
+        $message = new Message();
+        $message->setAuthor($author);
+        $message->setMessage($text);
+        return $message;
+    }
+
+    /**
      * @Id
      * @Column(type="integer")
      * @GeneratedValue(strategy="AUTO")

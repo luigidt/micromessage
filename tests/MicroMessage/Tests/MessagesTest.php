@@ -2,6 +2,8 @@
 
 namespace MicroMessage\Tests;
 
+use MicroMessage\Entities\Message;
+
 class MessagesTest extends ApplicationTest
 {
     private $message;
@@ -18,12 +20,90 @@ class MessagesTest extends ApplicationTest
         $this->assertTrue($this->client->getResponse()->isOk());
 
         $content = json_decode($this->client->getResponse()->getContent());
-        $this->assertCount(1, $content);
-        $message = $content[0];
+        $messages = $content->messages;
+        $this->assertCount(1, $messages);
+        $message = $messages[0];
 
         $this->assertEquals($this->message->getId(), $message->id);
         $this->assertEquals($this->message->getAuthor(), $message->author);
         $this->assertEquals($this->message->getMessage(), $message->message);
+    }
+
+    public function testListMessagesWhenEmpty()
+    {
+        // Remove the fixture
+        $this->app['orm.em']->remove($this->message);
+        $this->app['orm.em']->flush();
+
+        $this->client->request('GET', '/messages/');
+        $this->assertTrue($this->client->getResponse()->isOk());
+
+        $response = json_decode($this->client->getResponse()->getContent());
+        $this->assertCount(0, $response->messages);
+    }
+
+    public function testListPagination()
+    {
+        // Create another message
+        $second_message = Message::create('George Doe', 'A great message');
+        $this->app['orm.em']->persist($second_message);
+        $this->app['orm.em']->flush();
+
+        // testing first page
+        $this->client->request('GET', '/messages/', ['page' => 0, 'limit' => 1]);
+        $this->assertTrue($this->client->getResponse()->isOk());
+
+        $content = json_decode($this->client->getResponse()->getContent());
+        $this->assertEquals(1, $content->limit);
+        $this->assertEquals(0, $content->start);
+        $this->assertEquals(1, $content->size);
+
+        $messages = $content->messages;
+        $this->assertCount(1, $messages);
+
+        $message = $messages[0];
+        $this->assertEquals($this->message->getId(), $message->id);
+        $this->assertEquals($this->message->getAuthor(), $message->author);
+        $this->assertEquals($this->message->getMessage(), $message->message);
+
+        // testing second page
+        $this->client->request('GET', '/messages/', ['page' => 1, 'limit' => 1]);
+        $this->assertTrue($this->client->getResponse()->isOk());
+
+        $content = json_decode($this->client->getResponse()->getContent());
+        $this->assertEquals(1, $content->limit);
+        $this->assertEquals(1, $content->start);
+        $this->assertEquals(1, $content->size);
+
+        $messages = $content->messages;
+        $this->assertCount(1, $messages);
+
+        $message = $messages[0];
+        $this->assertEquals($second_message->getId(), $message->id);
+        $this->assertEquals($second_message->getAuthor(), $message->author);
+        $this->assertEquals($second_message->getMessage(), $message->message);
+    }
+
+    public function testListPaginationWithNegativePage()
+    {
+        $this->client->request('GET', '/messages/', ['page' => -1, 'limit' => 1]);
+        $this->assertTrue($this->client->getResponse()->isOk(), $this->client->getResponse()->getContent());
+
+        $content = json_decode($this->client->getResponse()->getContent());
+        $this->assertEquals(1, $content->limit);
+        $this->assertEquals(0, $content->start);
+        $this->assertEquals(1, $content->size);
+    }
+
+    public function testListPaginationWithZeroLimit()
+    {
+        $this->client->request('GET', '/messages/', ['limit' => 0]);
+        $this->assertTrue($this->client->getResponse()->isOk(), $this->client->getResponse()->getContent());
+
+        $content = json_decode($this->client->getResponse()->getContent());
+        $this->assertEquals(0, $content->limit);
+        $this->assertEquals(0, $content->start);
+        $this->assertEquals(0, $content->size);
     }
 
     public function testGetMessageById()
@@ -41,19 +121,6 @@ class MessagesTest extends ApplicationTest
     {
         $this->client->request('GET', '/messages/99999');
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
-    }
-
-    public function testListMessagesWhenEmpty()
-    {
-        // Remove the fixture
-        $this->app['orm.em']->remove($this->message);
-        $this->app['orm.em']->flush();
-
-        $this->client->request('GET', '/messages/');
-        $this->assertTrue($this->client->getResponse()->isOk());
-
-        $response = json_decode($this->client->getResponse()->getContent());
-        $this->assertCount(0, $response);
     }
 
     public function testCreateNewMessage()
