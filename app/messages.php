@@ -11,10 +11,7 @@ $messages = $app['controllers_factory'];
 
 $messages->get('/', function () use ($app) {
     $messages = $app['orm.em']
-        ->createQueryBuilder()
-        ->from('MicroMessage\Entities\Message', 'm')
-        ->select(['m.id', 'm.author', 'm.message'])
-        ->getQuery()
+        ->createQuery('SELECT m.id, m.author, m.message FROM MicroMessage\Entities\Message m')
         ->getResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
 
     return $app->json($messages);
@@ -41,13 +38,10 @@ $messages->post('/', function (Request $request) use ($app) {
 
 $messages->get('/{id}', function ($id) use ($app) {
     try {
+        // Usando uma query para especificar os campos que devem ser retornados no JSON
         $messages = $app['orm.em']
-            ->createQueryBuilder()
-            ->from('MicroMessage\Entities\Message', 'm')
-            ->select(['m.id', 'm.author', 'm.message'])
-            ->where('m.id = :id')
+            ->createQuery('SELECT m.id, m.author, m.message FROM MicroMessage\Entities\Message m WHERE m.id = :id')
             ->setParameter('id', $id)
-            ->getQuery()
             ->getSingleResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
 
         return $app->json($messages);
