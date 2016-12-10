@@ -4,12 +4,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Dflydev\Provider\DoctrineOrm\DoctrineOrmServiceProvider;
 
-$app = new Silex\Application();
-
 $enviroment = getenv('MICROMESSAGE_ENV') ?: 'development';
 $config = require __DIR__ . "/config/" . $enviroment . ".php";
 
+$app = new Silex\Application();
 $app['debug'] = $config['debug'];
+
 $app->register(
     new Silex\Provider\DoctrineServiceProvider(),
     ['db.options' => $config['db.options']]
