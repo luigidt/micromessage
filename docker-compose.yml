@@ -4,6 +4,11 @@ web:
     - .:/var/www/html
   environment:
     - MICROMESSAGE_ENV=production
+    - MICROMESSAGE_DATABASE_NAME=micromessage
+    - MICROMESSAGE_DATABASE_USER=postgres
+    # Usar um valor gerado aleatoriamente do ambiente. Ex:
+    # - POSTGRES_PASSWORD=$DATABASE_PASSWORD
+    - MICROMESSAGE_DATABASE_PASSWORD=verysecurepassword
   ports:
     - "8080:80"
   expose:
@@ -16,6 +21,7 @@ postgres:
   ports:
     - "5432:5432"
   environment:
+    # Usar a mesma variável que em MICROMESSAGE_DATABASE_PASSWORD
     - POSTGRES_PASSWORD=verysecurepassword
 redis:
   image: redis:3.0

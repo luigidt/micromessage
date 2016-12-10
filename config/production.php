@@ -7,9 +7,9 @@ return [
         'driver'    => 'pdo_pgsql',
         'host'      => getenv('POSTGRES_PORT_5432_TCP_ADDR'),
         'port'      => getenv('POSTGRES_PORT_5432_TCP_PORT'),
-        'dbname'    => 'micromessage',
-        'user'      => 'postgres',
-        'password'  => getenv('POSTGRES_1_ENV_POSTGRES_PASSWORD'),
+        'dbname'    => getenv('MICROMESSAGE_DATABASE_NAME'),
+        'user'      => getenv('MICROMESSAGE_DATABASE_USER'),
+        'password'  => getenv('MICROMESSAGE_DATABASE_PASSWORD'),
     ],
     'cache.provider' => [
         'driver' => 'redis',
