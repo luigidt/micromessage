@@ -14,7 +14,10 @@ Abaixo a lista de métodos disponíveis nesse WebService:
   <tr>
     <td>/messages/</td>
     <td>GET</td>
-    <td>Retorna uma lista com todas as mensagens publicadas</td>
+    <td>
+      Retorna uma lista com todas as mensagens publicadas.
+      Podem ser especificados os parâmetros <i>page</i> e <i>limit</i> para paginação
+    </td>
   </tr>
   <tr>
     <td>/messages/</td>

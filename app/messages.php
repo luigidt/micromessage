@@ -18,6 +18,13 @@ $messages = $app['controllers_factory'];
 /**
  * GET /
  * Retorna uma lista com todas as mensagens publicadas
+ * PARÂMETROS:
+ *  - page int opcional
+ *     Página de resultados que deve ser retornada
+ *     O valor padrão para esse parâmetro é 100
+ *  - limit int opcional
+ *     Quantidade de resultados que deve ser retornado em cada página
+ *
  * Exemplo de resposta:
  *
  * {
@@ -33,6 +40,19 @@ $messages = $app['controllers_factory'];
  *     ]
  * }
  *
+ * Se os parâmetros page ou limit forem informados o resultado será no formato
+ * {
+ *     "messages": [
+ *         {
+ *             "author": "John Doe",
+ *             "message": "Hello people!",
+ *         },
+ *         ....
+ *     ],
+ *     "limit": 100,  // limite informado no parâmetro ou o valor padrão
+ *     "size": 100,   // quantidade de resultados informados
+ *     "start": 0     // posição em que a paginação iniciou
+ * }
  */
 $messages->get('/', function (Request $request) use ($app) {
     $query = $app['orm.em']
