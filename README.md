@@ -69,10 +69,10 @@ Parâmetros para a mensagem:
 Para que o WebService funcione será necessário:
 
 - Renomear o arquivo `.env.sample` para `.env` e fazer as configurações necessárias
+- Rodar um `composer update` na pasta do projeto
 - Caso seja o ambiente de produção é necessário:
-  - Criar o banco de dados no container do postgres: `create database $DATABASENAME`
   - Rodar o comando `php bin/console.php orm:schema-tool:update --force` no container do app para criar o schema
 
   OU
 
-  - Executar o comando `create_database.bat` para criar o banco de dados (em breve a versão para POSIX!)
+  - Executar o comando `create_database.sh` para criar o schema 

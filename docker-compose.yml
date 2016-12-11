@@ -2,7 +2,8 @@ web:
   build: .
   volumes:
     - .:/var/www/html
-  env_file: .env
+  env_file: 
+    - .env
   ports:
     - "8080:80"
   expose:
@@ -14,9 +15,8 @@ postgres:
   image: postgres:9.3
   ports:
     - "5432:5432"
-  env_file: .env
-  environment:
-    - POSTGRES_PASSWORD=$MICROMESSAGE_DATABASE_PASSWORD
+  env_file: 
+    - .env
 redis:
   image: redis:3.0
   ports:
